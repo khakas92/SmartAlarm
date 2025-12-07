@@ -11,6 +11,13 @@ import java.util.*
 import android.media.MediaPlayer
 import android.os.Vibrator
 import android.os.VibrationEffect
+import android.app.NotificationManager
+import android.app.NotificationChannel
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ActivityCompat
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,20 +31,51 @@ class MainActivity : AppCompatActivity() {
     private var alarmHour = 0
     private var alarmMinute = 0
     private var isAlarmEnabled = false
-
     private lateinit var vibrator: Vibrator
+    private lateinit var notificationManager: NotificationManager
+    private val channelId = "alarm_channel"
+    private val notificationId = 1
+    private val permissionRequestCode = 100
+
+
+    private fun createNotificationChannel() {
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(channelId, "Alarm", importance).apply {
+            description = "Channel for Alarm"
+            enableVibration(true)
+            enableLights(true)
+        }
+        notificationManager.createNotificationChannel(channel)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        vibrator = getSystemService(Vibrator::class.java)
-
         currentTimeTextView = findViewById(R.id.currentTimeTextView)
         btnSetAlarm = findViewById(R.id.btnSetAlarm)
         btnCancelAlarm = findViewById(R.id.btnCancelAlarm)
         tvStatus = findViewById(R.id.tvStatus)
+
+        vibrator = getSystemService(Vibrator::class.java)
+
+        notificationManager = getSystemService(NotificationManager::class.java)
+        createNotificationChannel()
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    permissionRequestCode
+                )
+            }
+        }
 
         updateTime()
 
@@ -66,6 +104,8 @@ class MainActivity : AppCompatActivity() {
 
 
         btnCancelAlarm.setOnClickListener {
+            notificationManager.cancel(notificationId)
+
             vibrator.cancel()
 
             if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
@@ -80,6 +120,25 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == permissionRequestCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
 
     private fun updateTime() {
         val calendar = Calendar.getInstance()
@@ -100,8 +159,19 @@ class MainActivity : AppCompatActivity() {
         }, 1000)
     }
 
+
     private fun triggerAlarm() {
         tvStatus.text = "🔔 ALARM!!!"
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setContentTitle("🔔 Alarm")
+            .setContentText("Time to wake up!")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(notificationId, notification)
 
         val pattern = longArrayOf(0, 500, 500, 500, 500, 500)
         val vibrationEffect = VibrationEffect.createWaveform(pattern, -1)
