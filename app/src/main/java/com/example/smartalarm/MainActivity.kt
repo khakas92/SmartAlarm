@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.*
 import android.media.MediaPlayer
+import android.os.Vibrator
+import android.os.VibrationEffect
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,9 +25,14 @@ class MainActivity : AppCompatActivity() {
     private var alarmMinute = 0
     private var isAlarmEnabled = false
 
+    private lateinit var vibrator: Vibrator
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        vibrator = getSystemService(Vibrator::class.java)
 
         currentTimeTextView = findViewById(R.id.currentTimeTextView)
         btnSetAlarm = findViewById(R.id.btnSetAlarm)
@@ -59,6 +66,8 @@ class MainActivity : AppCompatActivity() {
 
 
         btnCancelAlarm.setOnClickListener {
+            vibrator.cancel()
+
             if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
                 mediaPlayer?.stop()
                 mediaPlayer?.release()
@@ -93,6 +102,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun triggerAlarm() {
         tvStatus.text = "🔔 ALARM!!!"
+
+        val pattern = longArrayOf(0, 500, 500, 500, 500, 500)
+        val vibrationEffect = VibrationEffect.createWaveform(pattern, -1)
+        vibrator.vibrate(vibrationEffect)
 
         mediaPlayer = MediaPlayer.create(
             this,
