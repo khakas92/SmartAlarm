@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private val channelId = "alarm_channel"
     private val notificationId = 1
     private val permissionRequestCode = 100
+    private var isSnoozeActive = false
+
 
 
     private fun createNotificationChannel() {
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         btnSetAlarm = findViewById(R.id.btnSetAlarm)
         btnCancelAlarm = findViewById(R.id.btnCancelAlarm)
         tvStatus = findViewById(R.id.tvStatus)
+        val btnSnooze = findViewById<Button>(R.id.btnSnooze)
 
         vibrator = getSystemService(Vibrator::class.java)
 
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                     isAlarmEnabled = true
 
                     val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
-                    tvStatus.text = "⏰ Alarm set for $alarmTime"
+                    tvStatus.text = getString(R.string.alarm_set_for, alarmTime)
                 },
                 hour,
                 minute,
@@ -116,8 +119,32 @@ class MainActivity : AppCompatActivity() {
 
             isAlarmEnabled = false
 
-            tvStatus.text = "❌ Alarm cancelled"
+            tvStatus.text = getString(R.string.alarm_cancelled)
         }
+
+        btnSnooze.setOnClickListener {
+            if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
+                mediaPlayer?.stop()
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
+
+            vibrator.cancel()
+            notificationManager.cancel(notificationId)
+
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.MINUTE, 5)
+
+            alarmHour = calendar.get(Calendar.HOUR_OF_DAY)
+            alarmMinute = calendar.get(Calendar.MINUTE)
+
+            isSnoozeActive = true
+            isAlarmEnabled = true
+
+            val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
+            tvStatus.text = getString(R.string.alarm_snoozed_message, alarmTime)
+        }
+
 
     }
 
@@ -131,9 +158,9 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == permissionRequestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.notification_permission_granted), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.notification_permission_denied), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -161,12 +188,13 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun triggerAlarm() {
-        tvStatus.text = "🔔 ALARM!!!"
+        tvStatus.text = getString(R.string.alarm_triggered)
+        isSnoozeActive = false
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("🔔 Alarm")
-            .setContentText("Time to wake up!")
+            .setContentTitle(getString(R.string.notification_title))
+            .setContentText(getString(R.string.notification_text))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
@@ -185,7 +213,6 @@ class MainActivity : AppCompatActivity() {
         )
 
         mediaPlayer?.setVolume(1.0f, 1.0f)
-
         mediaPlayer?.start()
     }
 
