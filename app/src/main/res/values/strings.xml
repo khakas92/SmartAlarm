@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">Smart Alarm</string>
-    <string name="alarm_triggered">🔔 ALARM 🔔</string>
-    <string name="alarm_set_for">⏰ Alarm set for %1$s"</string>
-    <string name="alarm_cancelled">❌ Alarm cancelled</string>
-    <string name="alarm_snoozed_message">"⏰ Alarm snoozed for %1$s"</string>
+    <string name="alarm_triggered">ALARM</string>
+    <string name="alarm_set_for">Alarm set for %1$s"</string>
+    <string name="alarm_not_set">Alarm is not set</string>
+    <string name="alarm_cancelled">Alarm cancelled</string>
+    <string name="alarm_snoozed_message">"Alarm snoozed for %1$s"</string>
     <string name="notification_permission_granted">Notification permission granted</string>
     <string name="notification_permission_denied">Notification permission denied. Please enable it in app settings."></string>
     <string name="notification_title">Alarm</string>

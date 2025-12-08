@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import android.Manifest
 import android.content.pm.PackageManager
 import android.widget.Toast
+import android.content.SharedPreferences
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +39,16 @@ class MainActivity : AppCompatActivity() {
     private val permissionRequestCode = 100
     private var isSnoozeActive = false
 
+    private lateinit var sharedPreferences: SharedPreferences
+
+    private companion object {
+        const val PREFS_NAME = "AlarmPrefs"
+        const val KEY_ALARM_HOUR = "alarmHour"
+        const val KEY_ALARM_MINUTE = "alarmMinute"
+        const val KEY_IS_ALARM_ENABLED = "isAlarmEnabled"
+    }
+
+
 
 
     private fun createNotificationChannel() {
@@ -54,6 +65,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        loadAlarmData()
+
 
         currentTimeTextView = findViewById(R.id.currentTimeTextView)
         btnSetAlarm = findViewById(R.id.btnSetAlarm)
@@ -96,6 +111,7 @@ class MainActivity : AppCompatActivity() {
 
                     val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
                     tvStatus.text = getString(R.string.alarm_set_for, alarmTime)
+                    saveAlarmData()
                 },
                 hour,
                 minute,
@@ -118,8 +134,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             isAlarmEnabled = false
-
             tvStatus.text = getString(R.string.alarm_cancelled)
+
+            saveAlarmData()
         }
 
         btnSnooze.setOnClickListener {
@@ -143,6 +160,8 @@ class MainActivity : AppCompatActivity() {
 
             val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
             tvStatus.text = getString(R.string.alarm_snoozed_message, alarmTime)
+
+            saveAlarmData()
         }
 
 
@@ -164,7 +183,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 
     private fun updateTime() {
@@ -215,5 +233,30 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer?.setVolume(1.0f, 1.0f)
         mediaPlayer?.start()
     }
+
+
+    private fun loadAlarmData() {
+        alarmHour = sharedPreferences.getInt(KEY_ALARM_HOUR, 7)
+        alarmMinute = sharedPreferences.getInt(KEY_ALARM_MINUTE, 0)
+        isAlarmEnabled = sharedPreferences.getBoolean(KEY_IS_ALARM_ENABLED, false)
+        tvStatus = findViewById(R.id.tvStatus)
+
+        if (isAlarmEnabled) {
+            val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
+            tvStatus.text = getString(R.string.alarm_set_for, alarmTime)
+        } else {
+            tvStatus.text = getString(R.string.alarm_not_set)
+        }
+    }
+
+
+    private fun saveAlarmData() {
+        val editor = sharedPreferences.edit()
+        editor.putInt(KEY_ALARM_HOUR, alarmHour)
+        editor.putInt(KEY_ALARM_MINUTE, alarmMinute)
+        editor.putBoolean(KEY_IS_ALARM_ENABLED, isAlarmEnabled)
+        editor.apply()
+    }
+
 
 }
