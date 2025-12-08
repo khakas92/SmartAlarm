@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.*
-import android.media.MediaPlayer
 import android.os.Vibrator
 import android.os.VibrationEffect
 import android.app.NotificationManager
@@ -28,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnCancelAlarm: Button
     private lateinit var tvStatus: TextView
     private val handler = Handler(Looper.getMainLooper())
-    private var mediaPlayer: MediaPlayer? = null
     private var alarmHour = 0
     private var alarmMinute = 0
     private var isAlarmEnabled = false
@@ -48,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         const val KEY_IS_ALARM_ENABLED = "isAlarmEnabled"
     }
 
+    private lateinit var alarmTTS: AlarmTTS
 
 
 
@@ -68,6 +67,8 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         loadAlarmData()
+
+        alarmTTS = AlarmTTS(this)
 
 
         currentTimeTextView = findViewById(R.id.currentTimeTextView)
@@ -127,11 +128,7 @@ class MainActivity : AppCompatActivity() {
 
             vibrator.cancel()
 
-            if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
-                mediaPlayer?.stop()
-                mediaPlayer?.release()
-                mediaPlayer = null
-            }
+            alarmTTS.stop()
 
             isAlarmEnabled = false
             tvStatus.text = getString(R.string.alarm_cancelled)
@@ -140,13 +137,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnSnooze.setOnClickListener {
-            if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
-                mediaPlayer?.stop()
-                mediaPlayer?.release()
-                mediaPlayer = null
-            }
-
             vibrator.cancel()
+            alarmTTS.stop()
             notificationManager.cancel(notificationId)
 
             val calendar = Calendar.getInstance()
@@ -165,6 +157,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+
+    override fun onDestroy() {
+        alarmTTS.shutdown()
+        super.onDestroy()
     }
 
 
@@ -223,15 +221,7 @@ class MainActivity : AppCompatActivity() {
         val vibrationEffect = VibrationEffect.createWaveform(pattern, -1)
         vibrator.vibrate(vibrationEffect)
 
-        mediaPlayer = MediaPlayer.create(
-            this,
-            android.media.RingtoneManager.getDefaultUri(
-                android.media.RingtoneManager.TYPE_ALARM
-            )
-        )
-
-        mediaPlayer?.setVolume(1.0f, 1.0f)
-        mediaPlayer?.start()
+        alarmTTS.speak("Доброе утро, Хельми, Гаврюша, Рафик и Майки! Надо вставать, пора уже играть!")
     }
 
 
