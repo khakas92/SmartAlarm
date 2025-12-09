@@ -18,6 +18,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.widget.Toast
 import android.content.SharedPreferences
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import android.content.Intent
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentTimeTextView: TextView
     private lateinit var btnSetAlarm: Button
     private lateinit var btnCancelAlarm: Button
+    private lateinit var btnSnooze: Button
     private lateinit var tvStatus: TextView
     private val handler = Handler(Looper.getMainLooper())
     private var alarmHour = 0
@@ -36,9 +40,7 @@ class MainActivity : AppCompatActivity() {
     private val notificationId = 1
     private val permissionRequestCode = 100
     private var isSnoozeActive = false
-
     private lateinit var sharedPreferences: SharedPreferences
-
     private companion object {
         const val PREFS_NAME = "AlarmPrefs"
         const val KEY_ALARM_HOUR = "alarmHour"
@@ -48,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var alarmTTS: AlarmTTS
 
+    private lateinit var weatherManager: WeatherManager
 
 
     private fun createNotificationChannel() {
@@ -63,19 +66,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val appSettings = AppSettings(this)
+        LocaleManager.setLocale(this, appSettings.language)
         setContentView(R.layout.activity_main)
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         loadAlarmData()
 
-        alarmTTS = AlarmTTS(this)
+        alarmTTS = AlarmTTS(this, AppSettings(this).language)
 
+        weatherManager = WeatherManager(BuildConfig.OPENWEATHER_API_KEY, this)
 
         currentTimeTextView = findViewById(R.id.currentTimeTextView)
         btnSetAlarm = findViewById(R.id.btnSetAlarm)
         btnCancelAlarm = findViewById(R.id.btnCancelAlarm)
         tvStatus = findViewById(R.id.tvStatus)
-        val btnSnooze = findViewById<Button>(R.id.btnSnooze)
+        btnSnooze = findViewById(R.id.btnSnooze)
 
         vibrator = getSystemService(Vibrator::class.java)
 
@@ -111,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     isAlarmEnabled = true
 
                     val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
-                    tvStatus.text = getString(R.string.alarm_set_for, alarmTime)
+                    tvStatus.text = getString(R.string.alarm_set, alarmTime)
                     saveAlarmData()
                 },
                 hour,
@@ -151,12 +157,17 @@ class MainActivity : AppCompatActivity() {
             isAlarmEnabled = true
 
             val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
-            tvStatus.text = getString(R.string.alarm_snoozed_message, alarmTime)
+            tvStatus.text = getString(R.string.alarm_snoozed, alarmTime)
 
             saveAlarmData()
         }
 
+        val btnSettings = findViewById<Button>(R.id.btnSettings)
 
+        btnSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
 
@@ -204,7 +215,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun triggerAlarm() {
-        tvStatus.text = getString(R.string.alarm_triggered)
+        tvStatus.text = getString(R.string.alarm_ringing)
         isSnoozeActive = false
 
         val notification = NotificationCompat.Builder(this, channelId)
@@ -221,7 +232,23 @@ class MainActivity : AppCompatActivity() {
         val vibrationEffect = VibrationEffect.createWaveform(pattern, -1)
         vibrator.vibrate(vibrationEffect)
 
-        alarmTTS.speak("Доброе утро, Хельми, Гаврюша, Рафик и Майки! Надо вставать, пора уже играть!")
+        val settings = AppSettings(this)
+        alarmTTS.setLanguage(settings.language)
+
+        lifecycleScope.launch {
+            val weatherMessage = weatherManager.getWeather(
+                settings.city,
+                settings.language
+            )
+
+            val alarmMessage = LocaleManager.getStringResource(
+                this@MainActivity,
+                R.string.tts_alarm_message,
+                settings.language
+            )
+
+            alarmTTS.speak("$alarmMessage $weatherMessage")
+        }
     }
 
 
@@ -233,7 +260,7 @@ class MainActivity : AppCompatActivity() {
 
         if (isAlarmEnabled) {
             val alarmTime = String.format("%02d:%02d", alarmHour, alarmMinute)
-            tvStatus.text = getString(R.string.alarm_set_for, alarmTime)
+            tvStatus.text = getString(R.string.alarm_set, alarmTime)
         } else {
             tvStatus.text = getString(R.string.alarm_not_set)
         }
@@ -247,6 +274,4 @@ class MainActivity : AppCompatActivity() {
         editor.putBoolean(KEY_IS_ALARM_ENABLED, isAlarmEnabled)
         editor.apply()
     }
-
-
 }

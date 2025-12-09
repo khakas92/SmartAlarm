@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ÄlyHerätyskello</string>
+
+    <!-- MainActivity -->
+    <string name="current_time">12:30</string>
+    <string name="btn_set_alarm">Aseta hälytys</string>
+    <string name="btn_snooze">Lykkää 5 minuuttia</string>
+    <string name="btn_cancel_alarm">Pysäytä hälytys</string>
+    <string name="btn_settings">⚙Asetukset</string>
+    <string name="alarm_not_set">Herätyskelloa ei ole asetettu</string>
+    <string name="alarm_set">Hälytys asetettu klo %s</string>
+    <string name="alarm_snoozed">Hälytys lykätty klo %s</string>
+    <string name="alarm_cancelled">Hälytys peruutettu</string>
+    <string name="alarm_ringing">HÄLYTYS SOI!!!</string>
+
+    <!-- Notifications -->
+    <string name="notification_title">Hälytys</string>
+    <string name="notification_text">Aika herätä!</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Asetukset</string>
+    <string name="settings_city_label">Kaupunki:</string>
+    <string name="settings_city_hint">Kirjoita kaupungin nimi</string>
+    <string name="settings_language_label">Kieli:</string>
+    <string name="settings_btn_save">Tallenna asetukset</string>
+    <string name="settings_error_empty_city">Kirjoita kaupungin nimi</string>
+    <string name="settings_saved">Asetukset tallennettu</string>
+
+    <!-- Languages -->
+    <string name="lang_english">🇬🇧 Englanti</string>
+    <string name="lang_russian">🇷🇺 Venäjä</string>
+    <string name="lang_finnish">🇫🇮 Suomi</string>
+
+    <!-- TTS Messages -->
+    <string name="tts_alarm_message">Hyvää huomenta! Aika herätä!</string>
+    <string name="tts_weather">Kaupungissa %s lämpötila on %d astetta. %s</string>
+    <string name="tts_error_weather">En voinut saada sääennustetta</string>
+
+    <!-- Toast Messages -->
+    <string name="tts_init_error">TextToSpeech ei alustettu</string>
+
+    <!-- Permissions Messages -->
+    <string name="notification_permission_granted">Ilmoitusasetukset on hyväksytty</string>
+    <string name="notification_permission_denied">Ilmoitusasetukset on hylätty. Ole hyvä ja aseta ne oikein käyttöliittymässä.</string>
+
+</resources>
