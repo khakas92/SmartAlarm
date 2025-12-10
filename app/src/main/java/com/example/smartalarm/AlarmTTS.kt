@@ -30,7 +30,7 @@ class AlarmTTS(context: Context, private var language: String = "en") {
                     isReady = true
                 }
             } else {
-                Toast.makeText(context, "TextToSpeech initialization failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.tts_init_error), Toast.LENGTH_SHORT).show()
             }
         }
     }

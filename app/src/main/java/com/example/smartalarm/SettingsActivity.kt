@@ -1,5 +1,6 @@
 package com.example.smartalarm
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -20,8 +21,6 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val appSettings = AppSettings(this)
-        LocaleManager.setLocale(this, appSettings.language)
         setContentView(R.layout.activity_settings)
 
         sharedPreferences = getSharedPreferences("AlarmPrefs", MODE_PRIVATE)
@@ -35,6 +34,12 @@ class SettingsActivity : AppCompatActivity() {
         btnSave.setOnClickListener {
             saveSettings()
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val lang = AppSettings(newBase).language
+        val wrapped = LocaleManager.wrapContext(newBase, lang)
+        super.attachBaseContext(wrapped)
     }
 
     private fun loadSettings() {

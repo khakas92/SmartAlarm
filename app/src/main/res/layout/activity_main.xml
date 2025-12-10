@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="32dp"
-        android:text="12:30"
         android:textColor="@android:color/black"
         android:textSize="32sp"
         android:textStyle="bold" />
@@ -47,7 +46,6 @@
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alarm is not set"
         android:textSize="18sp"
         android:layout_marginBottom="32dp"
         android:textStyle="bold" />

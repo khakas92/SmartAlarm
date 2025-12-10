@@ -14,5 +14,5 @@ class AppSettings(context: Context) {
 
     var language: String
         get() = sharedPreferences.getString("language", "en") ?: "en"
-        set(value) = sharedPreferences.edit().putString("language", value).apply()
+        set(value) = sharedPreferences.edit { putString("language", value) }
 }

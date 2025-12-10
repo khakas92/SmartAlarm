@@ -3,18 +3,17 @@
     <string name="app_name">Умный будильник</string>
 
     <!-- MainActivity -->
-    <string name="current_time">12:30</string>
     <string name="btn_set_alarm">Установить будильник</string>
     <string name="btn_snooze">Отложить на 5 минут</string>
     <string name="btn_cancel_alarm">Остановить будильник</string>
-    <string name="btn_settings">⚙Настройки</string>
+    <string name="btn_settings">Настройки</string>
     <string name="alarm_not_set">Будильник не установлен</string>
     <string name="alarm_set">Будильник установлен на %s</string>
     <string name="alarm_snoozed">Будильник отложен до %s</string>
     <string name="alarm_cancelled">Будильник отменён</string>
     <string name="alarm_ringing">БУДИЛЬНИК ЗВОНИТ!!!</string>
 
-    <string name="notification_title">🔔 Будильник</string>
+    <string name="notification_title">Будильник</string>
     <string name="notification_text">Время вставать!</string>
 
     <!-- Settings -->
@@ -22,7 +21,7 @@
     <string name="settings_city_label">Город:</string>
     <string name="settings_city_hint">Введи название города</string>
     <string name="settings_language_label">Язык:</string>
-    <string name="settings_btn_save">💾 Сохранить настройки</string>
+    <string name="settings_btn_save">Сохранить настройки</string>
     <string name="settings_error_empty_city">Введи название города</string>
     <string name="settings_saved">Настройки сохранены</string>
 
