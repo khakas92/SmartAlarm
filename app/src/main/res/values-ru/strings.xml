@@ -24,6 +24,8 @@
     <string name="settings_btn_save">Сохранить настройки</string>
     <string name="settings_error_empty_city">Введи название города</string>
     <string name="settings_saved">Настройки сохранены</string>
+    <string name="settings_speak_name_day">Именины:</string>
+    <string name="settings_speak_name_day_text">Именины будут прозвучены</string>
 
     <!-- Languages -->
     <string name="lang_english">🇬🇧 Английский</string>
@@ -34,6 +36,7 @@
     <string name="tts_alarm_message">Доброе утро! Время вставать!</string>
     <string name="tts_weather">В городе %s температура %d градусов. %s</string>
     <string name="tts_error_weather">Не удалось получить информацию о погоде</string>
+    <string name="tts_name_day">Сегодня именины у %s</string>
 
     <!-- Toast Messages -->
     <string name="tts_init_error">TextToSpeech не инициализирован</string>

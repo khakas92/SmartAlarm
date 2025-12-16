@@ -25,6 +25,10 @@
     <string name="settings_btn_save">Tallenna asetukset</string>
     <string name="settings_error_empty_city">Kirjoita kaupungin nimi</string>
     <string name="settings_saved">Asetukset tallennettu</string>
+    <string name="settings_speak_name_day">Nimipäivä:</string>
+    <string name="settings_speak_name_day_text">Nimipäivä on kuvattu</string>
+
+
 
     <!-- Languages -->
     <string name="lang_english">🇬🇧 Englanti</string>
@@ -35,6 +39,7 @@
     <string name="tts_alarm_message">Hyvää huomenta! Aika herätä!</string>
     <string name="tts_weather">Kaupungissa %s lämpötila on %d astetta. %s</string>
     <string name="tts_error_weather">En voinut saada sääennustetta</string>
+    <string name="tts_name_day">Tänään on nimipäivä %s</string>
 
     <!-- Toast Messages -->
     <string name="tts_init_error">TextToSpeech ei alustettu</string>

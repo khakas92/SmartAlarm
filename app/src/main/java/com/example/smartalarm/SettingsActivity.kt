@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import android.content.Intent
+import androidx.appcompat.widget.SwitchCompat
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -17,6 +18,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var etCity: EditText
     private lateinit var spinnerLanguage: Spinner
     private lateinit var btnSave: Button
+    private lateinit var switchNameDay: SwitchCompat
     private lateinit var sharedPreferences: android.content.SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +29,8 @@ class SettingsActivity : AppCompatActivity() {
 
         etCity = findViewById(R.id.etCity)
         spinnerLanguage = findViewById(R.id.spinnerLanguage)
+        switchNameDay = findViewById(R.id.switchNameDay)
+
         btnSave = findViewById(R.id.btnSave)
 
         setupLanguageSpinner()
@@ -45,6 +49,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun loadSettings() {
         val city = sharedPreferences.getString("city", "Helsinki") ?: "Helsinki"
         val language = sharedPreferences.getString("language", "en") ?: "en"
+        val speakNameDay = sharedPreferences.getBoolean("speak_name_day", true)
 
         etCity.setText(city)
 
@@ -55,6 +60,7 @@ class SettingsActivity : AppCompatActivity() {
             else -> 0
         }
         spinnerLanguage.setSelection(position)
+        switchNameDay.isChecked = speakNameDay
     }
 
     private fun setupLanguageSpinner() {
@@ -89,6 +95,7 @@ class SettingsActivity : AppCompatActivity() {
         sharedPreferences.edit {
             putString("city", city)
             putString("language", languageCode)
+            putBoolean("speak_name_day", switchNameDay.isChecked)
         }
 
         Toast.makeText(this, getString(R.string.settings_saved), Toast.LENGTH_SHORT).show()

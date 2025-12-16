@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var alarmTTS: AlarmTTS
 
     private lateinit var weatherManager: WeatherManager
+    private lateinit var nameDayManager: NameDayManager
+
 
 
     private fun createNotificationChannel() {
@@ -76,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         alarmTTS = AlarmTTS(this, AppSettings(this).language)
 
         weatherManager = WeatherManager(BuildConfig.OPENWEATHER_API_KEY, this)
+        nameDayManager = NameDayManager(this)
 
         currentTimeTextView = findViewById(R.id.currentTimeTextView)
         btnSetAlarm = findViewById(R.id.btnSetAlarm)
@@ -247,14 +250,29 @@ class MainActivity : AppCompatActivity() {
                 settings.language
             )
 
+            val nameDayNames = nameDayManager.getTodaysNames()
+
             val alarmMessage = LocaleManager.getStringResource(
                 this@MainActivity,
                 R.string.tts_alarm_message,
                 settings.language
             )
 
+            val fullMessage = buildString {
+                append(alarmMessage)
+                append(" ")
+                append(weatherMessage)
+                if (settings.speakNameDay) {
+                    val nameDayMessage = nameDayManager.getNameDayMessage(nameDayNames, settings.language, this@MainActivity)
+                    if (nameDayMessage.isNotEmpty()) {
+                        append(". ")
+                        append(nameDayMessage)
+                    }
+                }
+            }
+
             alarmTTS.setLanguage(settings.language)
-            alarmTTS.speak("$alarmMessage $weatherMessage")
+            alarmTTS.speak(fullMessage)
         }
     }
 

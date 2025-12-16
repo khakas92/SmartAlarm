@@ -24,6 +24,10 @@
     <string name="settings_btn_save">Save Settings</string>
     <string name="settings_error_empty_city">Enter city name</string>
     <string name="settings_saved">Settings saved</string>
+    <string name="settings_speak_name_day">Name day:</string>
+    <string name="settings_speak_name_day_text">Name day will be spoken</string>
+
+
 
     <!-- Languages -->
     <string name="lang_english">🇬🇧 English</string>
@@ -34,6 +38,8 @@
     <string name="tts_alarm_message">Good morning! Time to wake up!</string>
     <string name="tts_weather">In %s, temperature is %d degrees. %s</string>
     <string name="tts_error_weather">Could not get weather information</string>
+    <string name="tts_name_day">Today is name day for %s</string>
+
 
     <!-- Toast Messages -->
     <string name="tts_init_error">TextToSpeech not initialized</string>
